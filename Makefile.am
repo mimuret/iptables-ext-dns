@@ -1,0 +1,3 @@
+# -*- Makefile -*-
+#
+SUBDIRS = extensions modules
