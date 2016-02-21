@@ -7,7 +7,7 @@ Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
 sudo yum install gcc make automake libtool \
 iptables-devel kernel-headers
 
-git -b kernel2.6 clone https://github.com/mimuret/iptables-ext-dns.git
+git clone -b kernel2.6 https://github.com/mimuret/iptables-ext-dns.git
 cd iptables-ext-dns
 
 ./autogen.sh
@@ -21,7 +21,7 @@ sudo make install
 sudo yum install gcc make automake libtool \
 iptables-devel kernel-headers
 
-git -b kernel3 clone https://github.com/mimuret/iptables-ext-dns.git
+git clone -b kernel3 https://github.com/mimuret/iptables-ext-dns.git
 cd iptables-ext-dns
 
 ./autogen.sh
@@ -48,7 +48,12 @@ dns match options:
     (Flags ex. A,AAAA,MX,NS,TXT,SOA... )
         see. http://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml
 [!] --reverse-match --rmatch reverse matching flag
+[!] --maxsize qname max size 
 ```
+### qname size
+Qname size is not domain string length.
+For example "www.example.jp." string length is 15, but qname size is 16.
+For more information, see RFC1035.
 
 ## Example
 ### Ex. accept example.jp request.`
@@ -71,8 +76,8 @@ iptables -A INPUT  -m dns --rmatch --qname example.jp -j DROP
 ip6tables -A INPUT  -m dns --rmatch --qname example.jp -j DROP
 ```
 
-### Ex. drop ${random}.example.jp. request qname len > 64 .`
-`maxlen` option provide qname length filtering.
+### Ex. drop ${random}.example.jp. request qname size > 64 .`
+`maxsize` option provide qname size filtering.
 
 This sample not matches 'example.jp.' and 'hogehoge.example.jp.'.
 
@@ -82,11 +87,11 @@ iptables -A INPUT  -m dns --rmatch --qname example.jp ! --maxsize 64 -j DROP
 ip6tables -A INPUT  -m dns --rmatch --qname example.jp ! --maxsize 64 -j DROP
 ```
 
-### Ex. drop QType ANY`
-'qtype' option provide QType filter.
+### Ex. drop atype ANY`
+'qtype' option provide qtype filter.
 
 This sample is drop query when type is ANY.
 ```bash
-iptables -A INPUT -m dns --qtype ANY --maxsize 64 -j DROP
-ip6tables -A INPUT -m dns --qtype ANY --maxsize 64 -j DROP
+iptables -A INPUT -m dns --qtype ANY -j DROP
+ip6tables -A INPUT -m dns --qtype ANY -j DROP
 ```
