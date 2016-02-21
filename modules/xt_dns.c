@@ -26,7 +26,7 @@ MODULE_ALIAS("ip6t_dns");
 #define DEBUG_PRINT(...)
 #endif
 
-static bool dns_mt(const struct sk_buff *skb, const struct xt_match_param *par,
+static bool dns_mt(const struct sk_buff *skb, struct xt_action_param *par,
                    int16_t offset) {
     const struct dns_h *dh; // dns header working pointer
     struct dns_h _dnsh;     // dns header buffer
@@ -49,7 +49,7 @@ static bool dns_mt(const struct sk_buff *skb, const struct xt_match_param *par,
   
     if (dh == NULL) {
       DEBUG_PRINT("xt_dns: invalid dns header");
-  		*par->hotdrop = true;
+  		par->hotdrop = true;
       return false;
     }
     DEBUG_PRINT("success get dns header");
@@ -106,13 +106,13 @@ static bool dns_mt(const struct sk_buff *skb, const struct xt_match_param *par,
             if (skb_copy_bits(skb, offset, &llen, sizeof(uint8_t)) < 0 ||
                 llen > XT_DNS_LABEL_MAXSIZE) {
                 DEBUG_PRINT("xt_dns: invalid label len.");
-                *par->hotdrop = true;
+                par->hotdrop = true;
                 return false;
             }
             if (qlen + llen + 1 <= XT_DNS_MAXSIZE &&
                 skb_copy_bits(skb, offset, (qname+qlen), sizeof(uint8_t) * (llen + 1) ) < 0) {
                 DEBUG_PRINT("xt_dns: invalid label name %u,%u",qlen,llen);
-                *par->hotdrop = true;
+                par->hotdrop = true;
                 return false;
             }
             qlen += llen + 1;
@@ -125,7 +125,7 @@ static bool dns_mt(const struct sk_buff *skb, const struct xt_match_param *par,
         }
         if (skb_copy_bits(skb, offset, &qtype, sizeof(qtype)) < 0) {
             DEBUG_PRINT("xt_dns: invalid qtype");
-            *par->hotdrop = true;
+            par->hotdrop = true;
             return false;
         }
         if ((dnsinfo->setflags & XT_DNS_FLAG_QTYPE) &&
@@ -155,7 +155,7 @@ static bool dns_mt(const struct sk_buff *skb, const struct xt_match_param *par,
     DEBUG_PRINT("match success");
     return true;
 }
-static bool dns_mt_tcp(const struct sk_buff *skb, const struct xt_match_param *par,
+static bool dns_mt_tcp(const struct sk_buff *skb, struct xt_action_param *par,
                        int16_t offset) {
     const struct tcphdr *th;
     struct tcphdr _tcph;
@@ -166,7 +166,7 @@ static bool dns_mt_tcp(const struct sk_buff *skb, const struct xt_match_param *p
 
     if (th == NULL) {
         DEBUG_PRINT("xt_dns: invalid tcp header.");
-        *par->hotdrop = true;
+        par->hotdrop = true;
         return false;
     }
     if (ntohs(th->source) != DNS_PORT && ntohs(th->dest) != DNS_PORT) {
@@ -176,7 +176,7 @@ static bool dns_mt_tcp(const struct sk_buff *skb, const struct xt_match_param *p
 
     return dns_mt(skb, par, offset + sizeof(_tcph));
 }
-static bool dns_mt_udp(const struct sk_buff *skb, const struct xt_match_param *par,
+static bool dns_mt_udp(const struct sk_buff *skb, struct xt_action_param *par,
                        int16_t offset) {
     const struct udphdr *uh;
     struct udphdr _udph;
@@ -187,7 +187,7 @@ static bool dns_mt_udp(const struct sk_buff *skb, const struct xt_match_param *p
   
     if (uh == NULL) {
         DEBUG_PRINT("xt_dns: invalid udp header.");
-        *par->hotdrop = true;
+        par->hotdrop = true;
         return false;
     }
     if (ntohs(uh->source) != DNS_PORT && ntohs(uh->dest) != DNS_PORT) {
@@ -197,7 +197,7 @@ static bool dns_mt_udp(const struct sk_buff *skb, const struct xt_match_param *p
 
     return dns_mt(skb, par, offset + sizeof(_udph));
 }
-static bool dns_mt4(const struct sk_buff *skb, const struct xt_match_param *par) {
+static bool dns_mt4(const struct sk_buff *skb, struct xt_action_param *par) {
     struct iphdr _iph;
     const struct iphdr *ih;
     DEBUG_PRINT("start ipv4");
@@ -216,7 +216,7 @@ static bool dns_mt4(const struct sk_buff *skb, const struct xt_match_param *par)
     return false;
 }
 
-static bool dns_mt6(const struct sk_buff *skb, const struct xt_match_param *par) {
+static bool dns_mt6(const struct sk_buff *skb, struct xt_action_param *par) {
 
     struct ipv6hdr _iph;
     const struct ipv6hdr *ih;
