@@ -78,8 +78,8 @@ This sample not matches 'example.jp.' and 'hogehoge.example.jp.'.
 
 but 'OJcoaTh297tDwtkNCAV2vtLwh3P0S6Ldce6Oas0Sug6YJGCniluVLoEPBBIOTEr.example.com.' is matched
 ```bash
-iptables -A INPUT  -m dns --rmatch --qname example.jp ! --maxlen 64 -j DROP
-ip6tables -A INPUT  -m dns --rmatch --qname example.jp ! --maxlen 64 -j DROP
+iptables -A INPUT  -m dns --rmatch --qname example.jp ! --maxsize 64 -j DROP
+ip6tables -A INPUT  -m dns --rmatch --qname example.jp ! --maxsize 64 -j DROP
 ```
 
 ### Ex. drop QType ANY`
@@ -87,6 +87,6 @@ ip6tables -A INPUT  -m dns --rmatch --qname example.jp ! --maxlen 64 -j DROP
 
 This sample is drop query when type is ANY.
 ```bash
-iptables -A INPUT -m dns --qtype ANY --maxlen 64 -j DROP
-ip6tables -A INPUT -m dns --qtype ANY --maxlen 64 -j DROP
+iptables -A INPUT -m dns --qtype ANY --maxsize 64 -j DROP
+ip6tables -A INPUT -m dns --qtype ANY --maxsize 64 -j DROP
 ```
