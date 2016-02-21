@@ -7,7 +7,7 @@ Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
 sudo yum install gcc make automake libtool \
 iptables-devel kernel-headers
 
-git -b kernel2.6 clone https://github.com/mimuret/iptables-ext-dns.git
+git clone -b kernel2.6 https://github.com/mimuret/iptables-ext-dns.git
 cd iptables-ext-dns
 
 ./autogen.sh
@@ -21,7 +21,7 @@ sudo make install
 sudo yum install gcc make automake libtool \
 iptables-devel kernel-headers
 
-git -b kernel3 clone https://github.com/mimuret/iptables-ext-dns.git
+git clone -b kernel3 https://github.com/mimuret/iptables-ext-dns.git
 cd iptables-ext-dns
 
 ./autogen.sh
@@ -48,6 +48,7 @@ dns match options:
     (Flags ex. A,AAAA,MX,NS,TXT,SOA... )
         see. http://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml
 [!] --reverse-match --rmatch reverse matching flag
+[!] --maxsize qname max size 
 ```
 
 ## Example
