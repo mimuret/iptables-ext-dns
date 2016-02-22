@@ -87,7 +87,7 @@ iptables -A INPUT  -m dns --rmatch --qname example.jp ! --maxsize 64 -j DROP
 ip6tables -A INPUT  -m dns --rmatch --qname example.jp ! --maxsize 64 -j DROP
 ```
 
-### Ex. drop atype ANY`
+### Ex. drop qtype ANY`
 'qtype' option provide qtype filter.
 
 This sample is drop query when type is ANY.
