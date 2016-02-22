@@ -5,7 +5,7 @@ Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
 ####`CentOS 6`
 ```bash
 sudo yum install gcc make automake libtool \
-iptables-devel kernel-headers
+iptables-devel kernel-headers-`uname -r` kernel-devel-`uname -r`
 
 git clone -b kernel2.6 https://github.com/mimuret/iptables-ext-dns.git
 cd iptables-ext-dns
@@ -19,7 +19,7 @@ sudo make install
 ####`CentOS 7`
 ```bash
 sudo yum install gcc make automake libtool \
-iptables-devel kernel-headers
+iptables-devel kernel-headers-`uname -r` kernel-devel-`uname -r`
 
 git clone -b kernel3 https://github.com/mimuret/iptables-ext-dns.git
 cd iptables-ext-dns
