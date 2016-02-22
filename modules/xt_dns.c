@@ -21,7 +21,10 @@ MODULE_ALIAS("ip6t_dns");
 
 #ifdef DEBUG
 #define DEBUG_PRINT(fmt, ...)                                                  \
-    { printk(KERN_DEBUG "xt_dns %s(%d):" fmt "\n", __func__, __LINE__, ##__VA_ARGS__); }
+    {                                                                          \
+        printk(KERN_DEBUG "xt_dns %s(%d):" fmt "\n", __func__, __LINE__,       \
+               ##__VA_ARGS__);                                                 \
+    }
 #else
 #define DEBUG_PRINT(...)
 #endif
@@ -33,11 +36,11 @@ static bool dns_mt(const struct sk_buff *skb, struct xt_action_param *par,
 
     uint16_t qlen; // qname length, MAX 255
     uint16_t mlen; // match qname length, MAX 255
-    uint8_t llen; // label length, MAX 63
+    uint8_t llen;  // label length, MAX 63
 
-    uint8_t *qname;                // qname working pointer
+    uint8_t *qname;                 // qname working pointer
     uint8_t _qname[XT_DNS_MAXSIZE]; // qname buffer
-    uint16_t qtype;                // qtype buffer
+    uint16_t qtype;                 // qtype buffer
 
     const struct xt_dns *dnsinfo = par->matchinfo;
 
@@ -46,22 +49,23 @@ static bool dns_mt(const struct sk_buff *skb, struct xt_action_param *par,
     //	offset += par->thoff;
     dh = skb_header_pointer(skb, offset, sizeof(_dnsh), &_dnsh);
     DEBUG_PRINT("get dns header?");
-  
+
     if (dh == NULL) {
-      DEBUG_PRINT("xt_dns: invalid dns header");
-  		par->hotdrop = true;
-      return false;
+        DEBUG_PRINT("xt_dns: invalid dns header");
+        par->hotdrop = true;
+        return false;
     }
     DEBUG_PRINT("success get dns header");
     offset += sizeof(_dnsh);
 
-#define FWINVDNS(bool, invflag) ((bool) ^ (dnsinfo->invflags & invflag))
+#define FWINVDNS(bool, invflag) ((bool)^(dnsinfo->invflags & invflag))
 
     if (dnsinfo->qr && !FWINVDNS(dh->qr, XT_DNS_FLAG_QR)) {
         DEBUG_PRINT("not match qr flag");
         return false;
     }
-    if ((dnsinfo->setflags & XT_DNS_FLAG_OPCODE) && !FWINVDNS((dh->opcode == dnsinfo->opcode), XT_DNS_FLAG_OPCODE)) {
+    if ((dnsinfo->setflags & XT_DNS_FLAG_OPCODE) &&
+        !FWINVDNS((dh->opcode == dnsinfo->opcode), XT_DNS_FLAG_OPCODE)) {
         DEBUG_PRINT("not match OPCODE");
         return false;
     }
@@ -110,8 +114,9 @@ static bool dns_mt(const struct sk_buff *skb, struct xt_action_param *par,
                 return false;
             }
             if (qlen + llen + 1 <= XT_DNS_MAXSIZE &&
-                skb_copy_bits(skb, offset, (qname+qlen), sizeof(uint8_t) * (llen + 1) ) < 0) {
-                DEBUG_PRINT("xt_dns: invalid label name %u,%u",qlen,llen);
+                skb_copy_bits(skb, offset, (qname + qlen),
+                              sizeof(uint8_t) * (llen + 1)) < 0) {
+                DEBUG_PRINT("xt_dns: invalid label name %u,%u", qlen, llen);
                 par->hotdrop = true;
                 return false;
             }
@@ -119,8 +124,9 @@ static bool dns_mt(const struct sk_buff *skb, struct xt_action_param *par,
             offset += llen + 1;
         }
         DEBUG_PRINT("xt_dns: success qname parse. ");
-        if (!FWINVDNS((qlen <= dnsinfo->maxsize) , XT_DNS_FLAG_QNAME_MAXSIZE)) {
-            DEBUG_PRINT("qname longer than maxsize %d > %d", qlen, dnsinfo->maxsize);
+        if (!FWINVDNS((qlen <= dnsinfo->maxsize), XT_DNS_FLAG_QNAME_MAXSIZE)) {
+            DEBUG_PRINT("qname longer than maxsize %d > %d", qlen,
+                        dnsinfo->maxsize);
             return false;
         }
         if (skb_copy_bits(skb, offset, &qtype, sizeof(qtype)) < 0) {
@@ -137,7 +143,7 @@ static bool dns_mt(const struct sk_buff *skb, struct xt_action_param *par,
             qlen = mlen = 0;
             DEBUG_PRINT("start qname matching.");
             while (qlen < XT_DNS_MAXSIZE && qname[qlen] != 0 &&
-                   dnsinfo->qname[mlen] != 0) {        
+                   dnsinfo->qname[mlen] != 0) {
                 if (tolower(qname[qlen++]) != dnsinfo->qname[mlen++]) {
                     if (dnsinfo->rmatch) {
                         mlen = 0;
@@ -146,7 +152,8 @@ static bool dns_mt(const struct sk_buff *skb, struct xt_action_param *par,
                     }
                 }
             }
-            if (!FWINVDNS((qname[qlen] == 0 && dnsinfo->qname[mlen] == 0), XT_DNS_FLAG_QNAME)) {
+            if (!FWINVDNS((qname[qlen] == 0 && dnsinfo->qname[mlen] == 0),
+                          XT_DNS_FLAG_QNAME)) {
                 DEBUG_PRINT("not match qname");
                 return false;
             }
@@ -169,12 +176,13 @@ static bool dns_mt_tcp(const struct sk_buff *skb, struct xt_action_param *par,
         par->hotdrop = true;
         return false;
     }
-    if (ntohs(th->source) != DNS_PORT && ntohs(th->dest) != DNS_PORT) {
+    if (!(th->ack & th->psh) ||
+        (ntohs(th->source) != DNS_PORT && ntohs(th->dest) != DNS_PORT)) {
         DEBUG_PRINT("not dns packet");
         return false;
     }
 
-    return dns_mt(skb, par, offset + sizeof(_tcph));
+    return dns_mt(skb, par, offset + th->doff * 4 + 2);
 }
 static bool dns_mt_udp(const struct sk_buff *skb, struct xt_action_param *par,
                        int16_t offset) {
@@ -184,7 +192,7 @@ static bool dns_mt_udp(const struct sk_buff *skb, struct xt_action_param *par,
     DEBUG_PRINT("packet is UDP");
 
     uh = skb_header_pointer(skb, offset, sizeof(_udph), &_udph);
-  
+
     if (uh == NULL) {
         DEBUG_PRINT("xt_dns: invalid udp header.");
         par->hotdrop = true;
@@ -217,7 +225,6 @@ static bool dns_mt4(const struct sk_buff *skb, struct xt_action_param *par) {
 }
 
 static bool dns_mt6(const struct sk_buff *skb, struct xt_action_param *par) {
-
     struct ipv6hdr _iph;
     const struct ipv6hdr *ih;
     int16_t ptr;
@@ -237,7 +244,7 @@ static bool dns_mt6(const struct sk_buff *skb, struct xt_action_param *par) {
 
     ih = skb_header_pointer(skb, 0, sizeof(_iph), &_iph);
     ptr = sizeof(_iph);
-    
+
     currenthdr = ih->nexthdr;
     DEBUG_PRINT("start opt loop");
     while (currenthdr != NEXTHDR_NONE && ip6t_ext_hdr(currenthdr)) {

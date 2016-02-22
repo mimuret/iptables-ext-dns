@@ -6,19 +6,19 @@
 
 /* DNS matching stuff */
 struct xt_dns {
-    bool qr;                      /* QR Bit */
-    unsigned opcode : 4;          /* OPCODE */
-    bool aa;                      /* AA Bit */
-    bool tc;                      /* TC Bit */
-    bool rd;                      /* RD Bit */
-    bool ra;                      /* RA Bit */
-    bool ad;                      /* AD Bit */
-    bool cd;                      /* CD Bit */
-    unsigned rcode : 4;           /* RCODE  */
+    bool qr;                       /* QR Bit */
+    unsigned opcode : 4;           /* OPCODE */
+    bool aa;                       /* AA Bit */
+    bool tc;                       /* TC Bit */
+    bool rd;                       /* RD Bit */
+    bool ra;                       /* RA Bit */
+    bool ad;                       /* AD Bit */
+    bool cd;                       /* CD Bit */
+    unsigned rcode : 4;            /* RCODE  */
     uint8_t qname[XT_DNS_MAXSIZE]; /* Qname */
-    uint16_t qtype;               /* QTYPE */
+    uint16_t qtype;                /* QTYPE */
 
-    bool rmatch;    /* reverse match */
+    bool rmatch;     /* reverse match */
     uint8_t maxsize; /* max size */
 
     uint16_t invflags; /* Inverse Flags */

@@ -280,14 +280,13 @@ static void print_flag_attribute(const char *name, uint16_t value,
                                  uint16_t mask, uint16_t setflags,
                                  uint16_t invflag,
                                  const struct dns_flag_names *codes) {
-    int i = 0, ret = -1;
+    int i = 0;
     if (mask & setflags) {
         if (mask & invflag) {
             printf("! ");
         }
         for (i = 0; codes[i].name != NULL; i++) {
             if (codes[i].flag == value) {
-                ret = i;
                 break;
             }
         }
