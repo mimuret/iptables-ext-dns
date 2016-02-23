@@ -109,8 +109,8 @@ static uint16_t prase_code_flag(const char *name, const char *flag,
 #define parse_qtype_flags(flag) prase_code_flag("QTYPE", flag, dns_flag_qtype)
 
 static void parse_qname(const char *flag, uint8_t *qname) {
-    uint8_t buffer[XT_DNS_MAXSIZE];
-    uint8_t *fp;
+    char buffer[XT_DNS_MAXSIZE];
+    char *fp;
     fp = buffer;
     while (*flag != '\0') {
         *fp++ = tolower(*flag++);
@@ -309,7 +309,7 @@ static void print_flag_attribute(const char *name, uint16_t value,
 
 static void print_flag_qname(const u_char *qname, uint16_t setflags,
                              uint16_t invflag) {
-    u_char tmp[XT_DNS_MAXSIZE];
+    char tmp[XT_DNS_MAXSIZE];
     if (XT_DNS_FLAG_QNAME & setflags) {
         if (XT_DNS_FLAG_QNAME & invflag) {
             printf("! ");

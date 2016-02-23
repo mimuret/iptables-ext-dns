@@ -36,5 +36,9 @@ extensions/xtables
 extensions/.tmp_versions/
 extensions/.*.cmd
 
+include/autoconfig.h
+include/autoconfig.h.in
+modules/kernel.h
+
 .deps
 .libs

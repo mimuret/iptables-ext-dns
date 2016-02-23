@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT(iptables-ext-dns,1.0 , mimuret@gmail.com)
+AC_INIT(iptables-ext-dns,1.0.1 , mimuret@gmail.com)
 AC_CONFIG_AUX_DIR(config/gnu)
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_SRCDIR([extensions/libxt_dns.c])
@@ -16,7 +16,7 @@ AC_PROG_CC
 AC_CHECK_LIB([resolv], [main])
 
 # Checks for header files.
-AC_CHECK_HEADERS([netinet/in.h stdlib.h string.h])
+AC_CHECK_HEADERS([netinet/in.h stdlib.h string.h xtables.h])
 
 AC_HEADER_STDBOOL
 
@@ -37,5 +37,6 @@ if test x$enable_debug = xyes; then
 else
    AC_MSG_RESULT(no)
 fi
+
 LT_INIT
 AC_OUTPUT
