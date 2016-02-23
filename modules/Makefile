@@ -1,6 +1,6 @@
 # -*- Makefile
 obj-m := xt_dns.o
-ccflags-y := -O3 -I${PWD}/../include
+ccflags-y := -O3 -I$(src)/../include
 DEPMOD=/sbin/depmod
 INSTALL=/usr/bin/install -c
 KERNEL_RELEASE=`uname -r`
