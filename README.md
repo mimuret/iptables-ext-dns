@@ -54,7 +54,7 @@ ip6tables -A INPUT  -m dns --rmatch --qname example.jp -j DROP
 
 This sample not matches 'example.jp.' and 'hogehoge.example.jp.'.
 
-but 'OJcoaTh297tDwtkNCAV2vtLwh3P0S6Ldce6Oas0Sug6YJGCniluVLoEPBBIOTEr.example.com.' is matched
+but 'OJcoaTh297tDwtkNCAV2vtLwh3P0S6Ldce6Oas0Sug6YJGCniluVLoEPBBIOTEr.example.jp.' is matched
 ```bash
 iptables -A INPUT  -m dns --rmatch --qname example.jp ! --maxsize 64 -j DROP
 ip6tables -A INPUT  -m dns --rmatch --qname example.jp ! --maxsize 64 -j DROP
