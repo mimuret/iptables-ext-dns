@@ -88,7 +88,7 @@ static void dns_init(struct xt_entry_match *m) {
     data->rmatch = false;
     data->maxsize = XT_DNS_MAXSIZE;
 }
-static uint16_t prase_code_flag(const char *name, const char *flag,
+static uint16_t parse_code_flag(const char *name, const char *flag,
                                 const struct dns_flag_names *codes) {
     uint16_t i;
     uint16_t ret = 0;
@@ -104,9 +104,9 @@ static uint16_t prase_code_flag(const char *name, const char *flag,
     return ret;
 }
 #define parse_opcode_flags(flag)                                               \
-    prase_code_flag("OPCDOE", flag, dns_flag_opcode)
-#define parse_rcode_flags(flag) prase_code_flag("RCODE", flag, dns_flag_rcode)
-#define parse_qtype_flags(flag) prase_code_flag("QTYPE", flag, dns_flag_qtype)
+    parse_code_flag("OPCDOE", flag, dns_flag_opcode)
+#define parse_rcode_flags(flag) parse_code_flag("RCODE", flag, dns_flag_rcode)
+#define parse_qtype_flags(flag) parse_code_flag("QTYPE", flag, dns_flag_qtype)
 
 static void parse_qname(const char *flag, uint8_t *qname) {
     char buffer[XT_DNS_MAXSIZE];
