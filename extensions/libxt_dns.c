@@ -109,8 +109,8 @@ static uint16_t prase_code_flag(const char *name, const char *flag,
 #define parse_qtype_flags(flag) prase_code_flag("QTYPE", flag, dns_flag_qtype)
 
 static void parse_qname(const char *flag, uint8_t *qname) {
-    uint8_t buffer[XT_DNS_MAXSIZE];
-    uint8_t *fp;
+    char buffer[XT_DNS_MAXSIZE];
+    char *fp;
     fp = buffer;
     while (*flag != '\0') {
         *fp++ = tolower(*flag++);
@@ -233,7 +233,7 @@ static int dns_parse(int c, char **argv, int invert, unsigned int *flags,
         if (*flags & XT_DNS_FLAG_QTYPE) {
             xtables_error(PARAMETER_PROBLEM, "Only one `--qtype' allowed");
         }
-        data->qtype = parse_qtype_flags(optarg);
+        data->qtype = htons(parse_qtype_flags(optarg));
         data->setflags |= XT_DNS_FLAG_QTYPE;
         if (invert) {
             data->invflags |= XT_DNS_FLAG_QTYPE;
@@ -309,7 +309,7 @@ static void print_flag_attribute(const char *name, uint16_t value,
 
 static void print_flag_qname(const u_char *qname, uint16_t setflags,
                              uint16_t invflag) {
-    u_char tmp[XT_DNS_MAXSIZE];
+    char tmp[XT_DNS_MAXSIZE];
     if (XT_DNS_FLAG_QNAME & setflags) {
         if (XT_DNS_FLAG_QNAME & invflag) {
             printf("! ");
@@ -340,7 +340,7 @@ static void dns_dump(const void *ip, const struct xt_entry_match *match) {
     print_flag("cd", dns->cd, XT_DNS_FLAG_CD, dns->invflags);
     print_flag_rcode(dns->rcode, dns->setflags, dns->invflags);
     print_flag_qname(dns->qname, dns->setflags, dns->invflags);
-    print_flag_qtype(dns->qtype, dns->setflags, dns->invflags);
+    print_flag_qtype(ntohs(dns->qtype), dns->setflags, dns->invflags);
     print_flag("rmatch", dns->rmatch, XT_DNS_FLAG_RMATCH, dns->invflags);
     print_maxsize(dns->maxsize, dns->invflags);
 }
