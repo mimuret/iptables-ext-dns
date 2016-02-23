@@ -104,7 +104,7 @@ static uint16_t parse_code_flag(const char *name, const char *flag,
     return ret;
 }
 #define parse_opcode_flags(flag)                                               \
-    parse_code_flag("OPCDOE", flag, dns_flag_opcode)
+    parse_code_flag("OPCODE", flag, dns_flag_opcode)
 #define parse_rcode_flags(flag) parse_code_flag("RCODE", flag, dns_flag_rcode)
 #define parse_qtype_flags(flag) parse_code_flag("QTYPE", flag, dns_flag_qtype)
 
