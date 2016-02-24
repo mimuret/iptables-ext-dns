@@ -14,7 +14,7 @@ struct xt_dns {
     bool ra;                       /* RA Bit */
     bool ad;                       /* AD Bit */
     bool cd;                       /* CD Bit */
-    unsigned rcode : 4;            /* RCODE  */
+    unsigned rcode : 4;            /* RCODE */
     uint8_t qname[XT_DNS_MAXSIZE]; /* Qname */
     uint16_t qtype;                /* QTYPE */
 
