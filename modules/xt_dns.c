@@ -131,7 +131,7 @@ static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
             qlen += llen + 1;
             offset += llen + 1;
         }
-        DEBUG_PRINT("xt_dns: success qname parse. ");
+        DEBUG_PRINT("xt_dns: success qname parse.");
         if (!FWINVDNS((qlen <= dnsinfo->maxsize), XT_DNS_FLAG_QNAME_MAXSIZE)) {
             DEBUG_PRINT("qname longer than maxsize %d > %d", qlen,
                         dnsinfo->maxsize);
