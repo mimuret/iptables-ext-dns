@@ -66,7 +66,7 @@ static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
     DEBUG_PRINT("success get dns header");
     offset += sizeof(_dnsh);
 
-#define FWINVDNS(bool, invflag) ((bool)^(dnsinfo->invflags & invflag))
+#define FWINVDNS(bool, invflag) ((bool)^ !!(dnsinfo->invflags & invflag))
 
     if (dnsinfo->qr && !FWINVDNS(dh->qr, XT_DNS_FLAG_QR)) {
         DEBUG_PRINT("not match qr flag");
@@ -108,7 +108,7 @@ static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
     }
     DEBUG_PRINT("xt_dns: bit check done");
     if ((dnsinfo->setflags & XT_DNS_FLAG_QNAME) ||
-        (dnsinfo->setflags & XT_DNS_FLAG_QTYPE)) {
+        (dnsinfo->maxsize < XT_DNS_FLAG_QNAME_MAXSIZE)) {
         DEBUG_PRINT("xt_dns: start parse qname");
         qname = _qname;
         qlen = 0;
