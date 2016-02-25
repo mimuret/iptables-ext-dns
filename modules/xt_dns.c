@@ -66,7 +66,7 @@ static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
     DEBUG_PRINT("success get dns header");
     offset += sizeof(_dnsh);
 
-#define FWINVDNS(bool, invflag) ((bool)^ !!(dnsinfo->invflags & invflag))
+#define FWINVDNS(bool, invflag) ((bool)^!!(dnsinfo->invflags & invflag))
 
     if (dnsinfo->qr && !FWINVDNS(dh->qr, XT_DNS_FLAG_QR)) {
         DEBUG_PRINT("not match qr flag");
