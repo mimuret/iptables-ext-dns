@@ -1,3 +1,17 @@
+#
+# tool check
+#
+
+which nc > /dev/null
+if [ "$?" = "1" ] ; then
+  echo "nc not found"
+  exit 1
+fi
+which drill > /dev/null
+if [ "$?" = "1" ] ; then
+  echo "drill not found"
+  exit 1
+fi
 
 if [ "$IPT" = 'iptables' ] ; then
   SERVER='127.0.0.1'
@@ -45,7 +59,7 @@ function updateCheck() {
   rule=$1
   $IPT --zero $DNSTEST
 
-  echo $UPDATE_HEX | xxd -r -p | nc $SERVER 53 $NC_OPT
+  echo $UPDATE_HEX | xxd -r -p | nc $SERVER 53 $NC_OPT > /dev/null 2>&1
 
   res=$($IPT --list-rules $DNSTEST -v | grep -- "$rule")
   if [ $? != 0 ] ; then
@@ -53,7 +67,7 @@ function updateCheck() {
     error $rule
   fi
   val=$(echo $res | awk '{print $NF}' )
-  if [ ! match_check $val ] ; then
+  if [ $(match_check $val) ] ; then
     echo "[FAIL] $res"
     error $rule
   fi
@@ -71,7 +85,7 @@ function check() {
   fi
   
   val=$(echo $res | awk '{print $NF}' )
-  if [ ! match_check $val ] ; then
+  if [ $(match_check $val) ] ; then
       echo "[FAIL] $res"
       error $rule
   fi

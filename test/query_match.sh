@@ -8,9 +8,9 @@ PROTOCOL=$2
 function match_check() {
   val=$1
   if [ "$val" != "0" ] ; then
-    return true
+    return 1
   fi
-  return false
+  return 0
 }
 
 function main() {
