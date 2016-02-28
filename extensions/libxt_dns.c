@@ -43,7 +43,6 @@ static const struct option dns_opts[] = {
     {.name = "rcode", .has_arg = true, .val = O_DNS_FLAG_RCODE},
     {.name = "qname", .has_arg = true, .val = O_DNS_FLAG_QNAME},
     {.name = "qtype", .has_arg = true, .val = O_DNS_FLAG_QTYPE},
-    {.name = "reverse-match", .has_arg = false, .val = O_DNS_FLAG_RMATCH},
     {.name = "rmatch", .has_arg = false, .val = O_DNS_FLAG_RMATCH},
     {.name = "maxsize", .has_arg = true, .val = O_DNS_FLAG_QNAME_MAXSIZE},
     {.name = NULL, .has_arg = false},
@@ -61,12 +60,12 @@ static void dns_help(void) {
            "[!] --ad match when Authentic Data\n"
            "[!] --cd match when checking Disabled\n"
            "[!] --qname\n"
+           "    --rmatch set qname match mode to reverse matching flag\n"
            "[!] --qtype\n"
            "      (Flags ex. A,AAAA,MX,NS,TXT,SOA... )\n"
            "	see. "
            "http://www.iana.org/assignments/dns-parameters/"
            "dns-parameters.xhtml\n"
-           "[!] --reverse-match --rmatch reverse matching flag\n"
            "[!] --maxsize qname max size \n");
 }
 
@@ -242,11 +241,11 @@ static int dns_parse(int c, char **argv, int invert, unsigned int *flags,
         break;
     case O_DNS_FLAG_RMATCH:
         if (*flags & XT_DNS_FLAG_RMATCH) {
-            xtables_error(PARAMETER_PROBLEM, "Only one `--qtype' allowed");
+            xtables_error(PARAMETER_PROBLEM, "Only one `--rmatch' allowed");
         }
         data->rmatch = true;
         if (invert) {
-            data->invflags |= XT_DNS_FLAG_RMATCH;
+            xtables_error(PARAMETER_PROBLEM, "can't set invert `--rmatch' ");
         }
         *flags |= XT_DNS_FLAG_RMATCH;
         break;
