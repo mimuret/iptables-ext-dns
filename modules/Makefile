@@ -12,6 +12,6 @@ kernel.h: kernel.sh
 clean:
 	$(MAKE) -C $(BUILD_DIR) M=$(PWD) clean
 install:
-	$(MAKE) INSTALL_MOD_DIR=kernel/net/netfilter -C $(BUILD_DIR) M=$PWD modules_install
+	$(MAKE) INSTALL_MOD_DIR=kernel/net/netfilter -C $(BUILD_DIR) M=$(PWD) modules_install
 	$(DEPMOD) -A
 check:
