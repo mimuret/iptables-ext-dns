@@ -1,0 +1,12 @@
+language: c
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y iptables-dev ldnsutils dnsutils bind9
+install: sudo ./install-dependencies.sh
+compiler: gcc
+script:
+  - ./autogen.sh
+  - ./configure --libdir=/lib
+  - make
+  - sudo make install
+  - sudo make check

@@ -7,6 +7,7 @@
 #include <xtables.h>
 #include <arpa/nameser.h>
 #include "autoconfig.h"
+#include "kernel.h"
 #include "xt_dns.h"
 #include "xt_dns_flags.h"
 
@@ -15,6 +16,12 @@
     { printf("%s(%d):" fmt, __func__, __LINE__, ##__VA_ARGS__); }
 #else
 #define DEBUG_PRINT(...)
+#endif
+
+#if KERNEL_VERSION >= 3
+#define XT_PRINT(fmt, ...) printf(" " fmt, ##__VA_ARGS__)
+#else
+#define XT_PRINT(fmt, ...) printf(fmt " ", ##__VA_ARGS__)
 #endif
 
 #define O_DNS_FLAG_QR '1'
@@ -43,7 +50,6 @@ static const struct option dns_opts[] = {
     {.name = "rcode", .has_arg = true, .val = O_DNS_FLAG_RCODE},
     {.name = "qname", .has_arg = true, .val = O_DNS_FLAG_QNAME},
     {.name = "qtype", .has_arg = true, .val = O_DNS_FLAG_QTYPE},
-    {.name = "reverse-match", .has_arg = false, .val = O_DNS_FLAG_RMATCH},
     {.name = "rmatch", .has_arg = false, .val = O_DNS_FLAG_RMATCH},
     {.name = "maxsize", .has_arg = true, .val = O_DNS_FLAG_QNAME_MAXSIZE},
     {.name = NULL, .has_arg = false},
@@ -61,12 +67,12 @@ static void dns_help(void) {
            "[!] --ad match when Authentic Data\n"
            "[!] --cd match when checking Disabled\n"
            "[!] --qname\n"
+           "    --rmatch set qname match mode to reverse matching flag\n"
            "[!] --qtype\n"
            "      (Flags ex. A,AAAA,MX,NS,TXT,SOA... )\n"
            "	see. "
            "http://www.iana.org/assignments/dns-parameters/"
            "dns-parameters.xhtml\n"
-           "[!] --reverse-match --rmatch reverse matching flag\n"
            "[!] --maxsize qname max size \n");
 }
 
@@ -242,11 +248,11 @@ static int dns_parse(int c, char **argv, int invert, unsigned int *flags,
         break;
     case O_DNS_FLAG_RMATCH:
         if (*flags & XT_DNS_FLAG_RMATCH) {
-            xtables_error(PARAMETER_PROBLEM, "Only one `--qtype' allowed");
+            xtables_error(PARAMETER_PROBLEM, "Only one `--rmatch' allowed");
         }
         data->rmatch = true;
         if (invert) {
-            data->invflags |= XT_DNS_FLAG_RMATCH;
+            xtables_error(PARAMETER_PROBLEM, "can't set invert `--rmatch' ");
         }
         *flags |= XT_DNS_FLAG_RMATCH;
         break;
@@ -271,9 +277,9 @@ static void print_flag(const char *name, bool value, uint16_t mask,
                        uint16_t invflag) {
     if (value) {
         if (mask & invflag) {
-            printf("! ");
+            XT_PRINT("!");
         }
-        printf("--%s ", name);
+        XT_PRINT("--%s", name);
     }
 }
 static void print_flag_attribute(const char *name, uint16_t value,
@@ -283,7 +289,7 @@ static void print_flag_attribute(const char *name, uint16_t value,
     int i = 0;
     if (mask & setflags) {
         if (mask & invflag) {
-            printf("! ");
+            XT_PRINT("!");
         }
         for (i = 0; codes[i].name != NULL; i++) {
             if (codes[i].flag == value) {
@@ -293,7 +299,7 @@ static void print_flag_attribute(const char *name, uint16_t value,
         if (codes[i].name == NULL) {
             xtables_error(PARAMETER_PROBLEM, "Unknown %s `%d'", name, value);
         }
-        printf("--%s %s ", name, codes[i].name);
+        XT_PRINT("--%s %s", name, codes[i].name);
     }
 }
 
@@ -312,19 +318,19 @@ static void print_flag_qname(const u_char *qname, uint16_t setflags,
     char tmp[XT_DNS_MAXSIZE];
     if (XT_DNS_FLAG_QNAME & setflags) {
         if (XT_DNS_FLAG_QNAME & invflag) {
-            printf("! ");
+            XT_PRINT("!");
         }
         if (ns_name_ntop(qname, tmp, sizeof(tmp)) == -1)
             xtables_error(PARAMETER_PROBLEM, "Unknown qname %s\n", tmp);
-        printf("--qname %s ", tmp);
+        XT_PRINT("--qname %s", tmp);
     }
 }
 static void print_maxsize(uint8_t maxsize, uint16_t invflag) {
     if (maxsize != XT_DNS_MAXSIZE) {
         if (XT_DNS_FLAG_QNAME_MAXSIZE & invflag) {
-            printf("! ");
+            XT_PRINT("!");
         }
-        printf("--maxsize %d ", maxsize);
+        XT_PRINT("--maxsize %d", maxsize);
     }
 }
 
@@ -347,7 +353,7 @@ static void dns_dump(const void *ip, const struct xt_entry_match *match) {
 
 static void dns_print(const void *ip, const struct xt_entry_match *match,
                       int numeric) {
-    printf("dns ");
+    XT_PRINT("dns");
     dns_dump(ip, match);
 }
 
