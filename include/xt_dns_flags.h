@@ -9,7 +9,7 @@ const struct dns_flag_names dns_flag_opcode[] = {
     {"NOTIFY", 4}, {"UPDATE", 5}, {NULL, 0},
 };
 const struct dns_flag_names dns_flag_rcode[] = {
-    {"NOERROR", 0}, {"FORMERR", 2}, {"SERVFAIL", 2}, {"NXDOMAIN", 3},
+    {"NOERROR", 0}, {"FORMERR", 1}, {"SERVFAIL", 2}, {"NXDOMAIN", 3},
     {"NOTIMP", 4},  {"REFUSED", 5}, {"YXDOMAIN", 6}, {"YXRRSET", 7},
     {"NXRRSET", 8}, {"NOTAUTH", 9}, {"NOTZONE", 10}, {NULL, 0},
 };
