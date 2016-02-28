@@ -1,0 +1,9 @@
+language: c
+install: ./install-dependencies.sh --debug
+compiler: gcc
+script:
+  - ./autogen.sh
+  - ./configure --libdir=/lib
+  - make
+  - sudo make install
+  - sudo make check
