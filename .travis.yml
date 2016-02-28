@@ -1,5 +1,7 @@
 language: c
-install: ./install-dependencies.sh --debug
+before_install:
+  - iptables-dev
+install: sudo ./install-dependencies.sh
 compiler: gcc
 script:
   - ./autogen.sh

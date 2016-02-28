@@ -4,7 +4,7 @@ KERNEL_RELEASE=`uname -r`
 LDNS_DEVEL=''
 
 if [ -e '/etc/centos-release' ] ; then
-        sudo yum -y install gcc \
+        yum -y install gcc \
                 make automake libtool \
                 iptables-devel \
                 kernel-headers-$KERNEL_RELEASE \
@@ -12,7 +12,7 @@ if [ -e '/etc/centos-release' ] ; then
         exit $?
 fi
 if [ -e '/etc/fedora-release' ] ; then
-        sudo dnf -y install gcc \
+        dnf -y install gcc \
                 make automake libtool \
                 iptables-devel \
                 kernel-headers-$KERNEL_RELEASE \
@@ -20,7 +20,7 @@ if [ -e '/etc/fedora-release' ] ; then
         exit $?
 fi
 if [ -e '/etc/debian_version' ] ; then
-        sudo apt-get install gcc \
+        apt-get install gcc \
                 make \
                 automake \
                 autoconf \
