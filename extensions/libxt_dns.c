@@ -7,6 +7,7 @@
 #include <xtables.h>
 #include <arpa/nameser.h>
 #include "autoconfig.h"
+#include "kernel.h"
 #include "xt_dns.h"
 #include "xt_dns_flags.h"
 
@@ -15,6 +16,12 @@
     { printf("%s(%d):" fmt, __func__, __LINE__, ##__VA_ARGS__); }
 #else
 #define DEBUG_PRINT(...)
+#endif
+
+#if KERNEL_VERSION >= 3
+#define XT_PRINT(fmt, ...) printf(" " fmt, ##__VA_ARGS__)
+#else
+#define XT_PRINT(fmt, ...) printf(fmt " ", ##__VA_ARGS__)
 #endif
 
 #define O_DNS_FLAG_QR '1'
@@ -270,9 +277,9 @@ static void print_flag(const char *name, bool value, uint16_t mask,
                        uint16_t invflag) {
     if (value) {
         if (mask & invflag) {
-            printf("! ");
+            XT_PRINT("!");
         }
-        printf("--%s ", name);
+        XT_PRINT("--%s", name);
     }
 }
 static void print_flag_attribute(const char *name, uint16_t value,
@@ -282,7 +289,7 @@ static void print_flag_attribute(const char *name, uint16_t value,
     int i = 0;
     if (mask & setflags) {
         if (mask & invflag) {
-            printf("! ");
+            XT_PRINT("!");
         }
         for (i = 0; codes[i].name != NULL; i++) {
             if (codes[i].flag == value) {
@@ -292,7 +299,7 @@ static void print_flag_attribute(const char *name, uint16_t value,
         if (codes[i].name == NULL) {
             xtables_error(PARAMETER_PROBLEM, "Unknown %s `%d'", name, value);
         }
-        printf("--%s %s ", name, codes[i].name);
+        XT_PRINT("--%s %s", name, codes[i].name);
     }
 }
 
@@ -311,19 +318,19 @@ static void print_flag_qname(const u_char *qname, uint16_t setflags,
     char tmp[XT_DNS_MAXSIZE];
     if (XT_DNS_FLAG_QNAME & setflags) {
         if (XT_DNS_FLAG_QNAME & invflag) {
-            printf("! ");
+            XT_PRINT("!");
         }
         if (ns_name_ntop(qname, tmp, sizeof(tmp)) == -1)
             xtables_error(PARAMETER_PROBLEM, "Unknown qname %s\n", tmp);
-        printf("--qname %s ", tmp);
+        XT_PRINT("--qname %s", tmp);
     }
 }
 static void print_maxsize(uint8_t maxsize, uint16_t invflag) {
     if (maxsize != XT_DNS_MAXSIZE) {
         if (XT_DNS_FLAG_QNAME_MAXSIZE & invflag) {
-            printf("! ");
+            XT_PRINT("!");
         }
-        printf("--maxsize %d ", maxsize);
+        XT_PRINT("--maxsize %d", maxsize);
     }
 }
 
@@ -346,7 +353,7 @@ static void dns_dump(const void *ip, const struct xt_entry_match *match) {
 
 static void dns_print(const void *ip, const struct xt_entry_match *match,
                       int numeric) {
-    printf("dns ");
+    XT_PRINT("dns");
     dns_dump(ip, match);
 }
 

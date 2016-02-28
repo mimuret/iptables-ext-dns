@@ -5,10 +5,8 @@ DEPMOD=/sbin/depmod
 INSTALL=/usr/bin/install -c
 KERNEL_RELEASE=`uname -r`
 BUILD_DIR=/lib/modules/$(KERNEL_RELEASE)/build
-all: kernel.h
+all:
 	$(MAKE) -C $(BUILD_DIR) M=$(PWD) modules
-kernel.h: kernel.sh
-	$(SHELL) kernel.sh > kernel.h
 clean:
 	$(MAKE) -C $(BUILD_DIR) M=$(PWD) clean
 install:

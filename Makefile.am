@@ -1,3 +1,3 @@
 # -*- Makefile -*-
 #
-SUBDIRS = extensions modules test
+SUBDIRS = include extensions modules test
