@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 IPT=$1
 PROTOCOL=$2
