@@ -1,4 +1,6 @@
 language: c
+before_install:
+  - sudo apt-get -qq update
 install: sudo ./install-dependencies.sh
 compiler: gcc
 script:
