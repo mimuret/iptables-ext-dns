@@ -12,5 +12,6 @@ kernel.h: kernel.sh
 clean:
 	$(MAKE) -C $(BUILD_DIR) M=$(PWD) clean
 install:
-	$(INSTALL) -m 0755 -o root -g root xt_dns.ko /lib/modules/$(KERNEL_RELEASE)/kernel/net/netfilter/xt_dns.ko
+	$(MAKE) INSTALL_MOD_DIR=kernel/net/netfilter -C $(BUILD_DIR) M=$PWD modules_install
 	$(DEPMOD) -A
+check:

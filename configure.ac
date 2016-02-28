@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT(iptables-ext-dns,1.0.1 , mimuret@gmail.com)
-AC_CONFIG_AUX_DIR(config/gnu)
+AC_INIT(iptables-ext-dns,1.0.3 , mimuret@gmail.com)
+AC_CONFIG_AUX_DIR(misc)
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_SRCDIR([extensions/libxt_dns.c])
 AC_CONFIG_HEADERS([include/autoconfig.h])
@@ -16,7 +16,8 @@ AC_PROG_CC
 AC_CHECK_LIB([resolv], [main])
 
 # Checks for header files.
-AC_CHECK_HEADERS([netinet/in.h stdlib.h string.h xtables.h])
+AC_CHECK_HEADERS([netinet/in.h stdlib.h string.h],[],[AC_MSG_ERROR([need header])])
+AC_CHECK_HEADERS([xtables.h],[],[AC_MSG_ERROR([need xtables.h in iptables-devel])])
 
 AC_HEADER_STDBOOL
 
@@ -25,7 +26,7 @@ AC_HEADER_STDBOOL
 # Checks for library functions.
 AC_CHECK_FUNCS([strcasecmp strdup])
 
-AC_CONFIG_FILES([Makefile extensions/Makefile])
+AC_CONFIG_FILES([Makefile extensions/Makefile test/Makefile])
 
 AC_ARG_ENABLE(debug, [ --enable-debug trun on debugging [default no]],,enable_debug=no)
 AC_MSG_CHECKING(whether to enable debuging)
@@ -37,6 +38,5 @@ if test x$enable_debug = xyes; then
 else
    AC_MSG_RESULT(no)
 fi
-
 LT_INIT
 AC_OUTPUT
