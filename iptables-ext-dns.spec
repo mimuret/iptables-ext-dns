@@ -5,7 +5,7 @@ Summary: Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
 Name: iptables-ext-dns
 Version: 1.0.3
 Release: 0%{?dist}
-License: GPL
+License: GPLv3
 Group: System Environment/Base
 Source: https://github.com/mimuret/iptables-ext-dns/iptables-ext-dns-%{version}.zip
 URL: https://github.com/mimuret/iptables-ext-dns
@@ -17,7 +17,7 @@ BuildRequires: gcc make automake libtool iptables-devel kernel-headers kernel-de
 Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
 
 %prep
-rm -rf ${RPM_BUILD_ROOT}
+%{__rm} -rf ${RPM_BUILD_ROOT}
 
 %setup
 autoreconf --install --force --verbose
