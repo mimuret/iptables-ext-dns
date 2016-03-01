@@ -2,7 +2,12 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT(iptables-ext-dns,1.0.3 , mimuret@gmail.com)
+m4_define([VERSION_MAJOR],[1])
+m4_define([VERSION_MINOR],[1])
+m4_define([VERSION_MICRO],[0])
+AC_INIT(iptables-ext-dns,m4_defn([VERSION_MAJOR]).m4_defn([VERSION_MINOR]).m4_defn([VERSION_MICRO]), mimuret@gmail.com, iptables-ext-dns)
+AC_SUBST(VERSION_INFO, [VERSION_MAJOR:VERSION_MINOR:VERSION_MICRO])
+
 AC_CONFIG_AUX_DIR(misc)
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_SRCDIR([extensions/libxt_dns.c])

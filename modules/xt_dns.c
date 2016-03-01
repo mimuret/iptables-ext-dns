@@ -184,8 +184,7 @@ static bool dns_mt_tcp(const struct sk_buff *skb, XT_PARAM *par,
         HOTDROP(par);
         return false;
     }
-    if (!(th->ack & th->psh) ||
-        (ntohs(th->source) != DNS_PORT && ntohs(th->dest) != DNS_PORT)) {
+    if (!(th->ack & th->psh) || (th->dest != htons(DNS_PORT))) {
         DEBUG_PRINT("not dns packet");
         return false;
     }
@@ -206,7 +205,7 @@ static bool dns_mt_udp(const struct sk_buff *skb, XT_PARAM *par,
         HOTDROP(par);
         return false;
     }
-    if (ntohs(uh->source) != DNS_PORT && ntohs(uh->dest) != DNS_PORT) {
+    if (uh->dest != htons(DNS_PORT)) {
         DEBUG_PRINT("not dns packet");
         return false;
     }
