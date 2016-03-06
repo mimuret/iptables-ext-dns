@@ -16,7 +16,7 @@ if [ -e '/etc/centos-release' ] ; then
 fi
 if [ -e '/etc/fedora-release' ] ; then
         if [ "$1" = "--debug" ] ; then
-          yum install -y bind-utils ldns nc vim-common
+          yum install -y bind-utils ldns-utils nc vim-common
         fi
         dnf install -y gcc \
                 make automake libtool \
