@@ -33,7 +33,7 @@ if [ -e '/etc/debian_version' ] ; then
         IPT_VERSION=$(apt show iptables | grep 'Version' | awk '{print $2}')
 
         PACKAGES="gcc make automake libtool"
-        PACKAGES="$PACKAGES linux-headers=$KERNEL_RELEASE"
+        PACKAGES="$PACKAGES linux-headers-$KERNEL_RELEASE"
         PACKAGES="$PACKAGES iptables-dev=$IPT_VERSION"
 
         if [ "$1" = "--debug" ] ; then
