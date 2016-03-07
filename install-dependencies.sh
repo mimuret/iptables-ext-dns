@@ -2,17 +2,13 @@
 
 KERNEL_RELEASE=`uname -r`
 
-if [ -e '/etc/centos-release' ] ; then
+if [ -e '/etc/redhat-release' ] ; then
         IPT_VERSION=$(rpm -qi iptables  | grep Version| awk '{print $3}')
 
         PACKAGES="gcc make automake libtool"
         PACKAGES="$PACKAGES kernel-headers-$KERNEL_RELEASE kernel-devel-$KERNEL_RELEASE"
         PACKAGES="$PACKAGES iptables-devel-$IPT_VERSION"
 
-        if [ "$1" = "--debug" ] ; then
-          PACKAGES="$PACKAGES bind-utils ldns-utils nc vim-common"
-        fi
-        yum install -y $PACKAGES
         exit $?
 fi
 if [ -e '/etc/fedora-release' ] ; then
