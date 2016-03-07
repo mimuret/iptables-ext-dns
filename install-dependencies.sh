@@ -30,7 +30,7 @@ if [ -e '/etc/fedora-release' ] ; then
         exit $?
 fi
 if [ -e '/etc/debian_version' ] ; then
-        IPT_VERSION=$(apt show iptables | grep 'Version' | awk '{print $2}')
+        IPT_VERSION=$(aptitude show iptables | grep 'Version' | awk '{print $2}')
 
         PACKAGES="gcc make automake libtool"
         PACKAGES="$PACKAGES linux-headers-$KERNEL_RELEASE"

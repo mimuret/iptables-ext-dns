@@ -1,7 +1,7 @@
 language: c
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y bind9 apt
+  - sudo apt-get install -y bind9 
 install: sudo ./install-dependencies.sh
 compiler: gcc
 script:
