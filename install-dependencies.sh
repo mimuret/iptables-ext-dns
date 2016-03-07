@@ -3,7 +3,7 @@
 KERNEL_RELEASE=`uname -r`
 LDNS_DEVEL=''
 
-if [ -e '/etc/centos-release' ] ; then
+if [ -e '/etc/redhat-release' ] ; then
         if [ "$1" = "--debug" ] ; then
                 yum install -y bind-utils ldns nc vim-common
         fi
