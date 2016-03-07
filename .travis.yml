@@ -2,7 +2,7 @@ language: c
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y bind9 
-install: sudo ./install-dependencies.sh
+install: sudo ./install-dependencies.sh --debug
 compiler: gcc
 script:
   - ./autogen.sh
