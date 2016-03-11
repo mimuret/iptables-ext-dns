@@ -31,37 +31,37 @@ fi
 DNSTEST=$(date +DNSTEST-%Y%m%d)
 
 function ipt() {
-  ./test-ipt.sh $IPT $DNSTEST $1
+  ./test-ipt.sh $IPT $TABLE $DNSTEST $1
 }
 function begin() {
   ipt "append"
   if [ "$PROTOCOL" = "udp" ] ; then
-    $IPT -I INPUT -i lo -p udp --dport 53 -j $DNSTEST
+    $IPT -t $TABLE -I $TARGET_CHAIN -i lo -p udp --dport 53 -j $DNSTEST
   else
-    $IPT -I INPUT -i lo -p tcp --dport 53 -j $DNSTEST
+    $IPT -t $TABLE -I $TARGET_CHAIN -i lo -p tcp --dport 53 -j $DNSTEST
   fi
 }
 function finish() {
   if [ "$PROTOCOL" = "udp" ] ; then
-    $IPT -D INPUT -i lo -p udp --dport 53 -j $DNSTEST
+    $IPT -t $TABLE -D $TARGET_CHAIN -i lo -p udp --dport 53 -j $DNSTEST
   else
-    $IPT -D INPUT -i lo -p tcp --dport 53 -j $DNSTEST
+    $IPT -t $TABLE -D $TARGET_CHAIN -i lo -p tcp --dport 53 -j $DNSTEST
   fi
   ipt "delete"
 }
 function error() {
   echo "[FAIL] $@"
-  $IPT --list-rules $DNSTEST -v
+  $IPT -t $TABLE --list-rules $DNSTEST -v
   finish
   exit 1
 }
 function updateCheck() {
   rule=$1
-  $IPT --zero $DNSTEST
+  $IPT -t $TABLE --zero $DNSTEST
 
   echo $UPDATE_HEX | xxd -r -p | nc $SERVER 53 $NC_OPT > /dev/null 2>&1
 
-  res=$($IPT --list-rules $DNSTEST -v | grep -- "$rule")
+  res=$($IPT -t $TABLE --list-rules $DNSTEST -v | grep -- "$rule")
   if [ $? != 0 ] ; then
     echo "[ERR] $res"
     error $rule
@@ -76,9 +76,9 @@ function updateCheck() {
 function check() {
   rule=$1 ; shift
   domain=$1 ; shift
-  $IPT --zero $DNSTEST
+  $IPT -t $TABLE --zero $DNSTEST
   drill $domain @$SERVER $DRILL_OPT $@ > /dev/null 2>&1
-  res=$($IPT --list-rules $DNSTEST -v | grep -- "$rule ")
+  res=$($IPT -t $TABLE --list-rules $DNSTEST -v | grep -- "$rule ")
   if [ $? != 0 ] ; then
     echo "[ERR] $res"
     error $rule

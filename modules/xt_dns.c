@@ -287,22 +287,18 @@ static bool dns_mt6(const struct sk_buff *skb, XT_PARAM *par) {
 }
 
 static struct xt_match dns_mt_reg[] __read_mostly = {
-    {
-        .name = "dns",
-        .table = "filter",
-        .family = NFPROTO_IPV4,
-        .match = dns_mt4,
-        .matchsize = sizeof(struct xt_dns),
-        .me = THIS_MODULE,
-    },
-    {
-        .name = "dns",
-        .table = "filter",
-        .family = NFPROTO_IPV6,
-        .match = dns_mt6,
-        .matchsize = sizeof(struct xt_dns),
-        .me = THIS_MODULE,
-    }};
+    {.name = "dns",
+     .family = NFPROTO_IPV4,
+     .match = dns_mt4,
+     .matchsize = sizeof(struct xt_dns),
+     .me = THIS_MODULE,
+     .hooks = (1 << NF_INET_LOCAL_IN) | (1 << NF_INET_PRE_ROUTING)},
+    {.name = "dns",
+     .family = NFPROTO_IPV6,
+     .match = dns_mt6,
+     .matchsize = sizeof(struct xt_dns),
+     .me = THIS_MODULE,
+     .hooks = (1 << NF_INET_LOCAL_IN) | (1 << NF_INET_PRE_ROUTING)}};
 static int __init dns_mt_init(void) {
     return xt_register_matches(dns_mt_reg, ARRAY_SIZE(dns_mt_reg));
 }

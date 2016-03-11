@@ -1,9 +1,17 @@
 #!/bin/bash
 
-. query_match_common.sh
-
 IPT=$1
 PROTOCOL=$2
+TABLE=$3
+
+. query_match_common.sh
+
+if [ "$TABLE" = "filter" ] ; then
+  TARGET_CHAIN="INPUT"
+fi
+if [ "$TABLE" = "mangle" ] ; then
+  TARGET_CHAIN="PREROUTING"
+fi
 
 function match_check() {
   val=$1

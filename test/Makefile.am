@@ -1,10 +1,18 @@
-TESTS=01_module_load.sh \
-02_rule_create.sh \
-03.1_ipv4_udp_match.sh \
-03.2_ipv4_tcp_match.sh \
-03.3_ipv6_udp_match.sh \
-03.4_ipv6_tcp_match.sh \
-04.1_ipv4_udp_nomatch.sh \
-04.2_ipv4_tcp_nomatch.sh \
-04.3_ipv6_udp_nomatch.sh \
-04.4_ipv6_tcp_nomatch.sh
+TESTS=1_module_load.sh \
+2_rule_create.sh \
+3.1.1_check_ipv4_udp_input.sh \
+3.1.2_check_ipv4_udp_prerouting.sh \
+3.2.1_check_ipv4_tcp_input.sh \
+3.2.2_check_ipv4_tcp_prerouting.sh \
+3.3.1_check_ipv6_udp_input.sh \
+3.3.2_check_ipv6_udp_prerouting.sh \
+3.4.1_check_ipv6_tcp_input.sh \
+3.4.2_check_ipv6_tcp_prerouting.sh \
+4.1.1_check_no_ipv4_udp_input.sh \
+4.1.2_check_no_ipv4_udp_prerouting.sh \
+4.2.1_check_no_ipv4_tcp_input.sh \
+4.2.2_check_no_ipv4_tcp_prerouting.sh \
+4.3.1_check_no_ipv6_udp_input.sh \
+4.3.2_check_no_ipv6_udp_mangle.sh \
+4.4.1_check_no_ipv6_tcp_input.sh \
+4.4.2_check_no_ipv6_tcp_prerouting.sh 
