@@ -52,16 +52,15 @@ export INSTALL_MOD_DIR=%{_mod_dir}
 %doc LICENSE
 %doc README.md
 
-/lib64/xtables/libxt_dns.a
-/lib64/xtables/libxt_dns.la
-/lib64/xtables/libxt_dns.so
-/lib64/xtables/libxt_dns.so.1
-/lib64/xtables/libxt_dns.so.%{version}
+/%{_lib}/xtables/libxt_dns.*
 /lib/modules/%(uname -r)/%{_mod_dir}/xt_dns.ko
 
 %{_datadir}
 
 %changelog
+* Fri Mar 18 2016 t0r0t0r0
+- 3rd
+
 * Mon Feb 29 2016 t0r0t0r0
 - 2nd
 
