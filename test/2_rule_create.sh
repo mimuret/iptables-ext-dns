@@ -2,17 +2,20 @@
 
 function ipt() {
   cmd=$1
-  chain=$2
-  act=$3
-  ./test-ipt.sh $cmd $chain $act
+  table=$2
+  chain=$3
+  act=$4
+  ./test-ipt.sh $cmd $table $chain $act
 }
 function begin() {
   cmd=$1
-  chain=$2
-  ipt $cmd $chain "append"
+  table=$2
+  chain=$3
+  act=$4
+  ipt $cmd $table $chain "append"
 }
 function finish() {
-  ipt $cmd $chain "delete"
+  ipt $cmd $table $chain "delete"
 }
 function error() {
   echo "[ERR] $@"
@@ -26,10 +29,11 @@ function check() {
 }
 function main() {
   cmd=$1
-  chain=$2
-  begin $cmd $chain
+  table=$2
+  chain=$3
+  begin $cmd $table $chain
 
-  RULES=`$cmd --list-rules $chain -v`
+  RULES=`$cmd -t $table --list-rules $chain -v`
 
   check "-m dns --qr"
   check "-m dns ! --qr"
@@ -68,15 +72,17 @@ function main() {
   check "-m dns --maxsize 128"
   check "-m dns ! --maxsize 128"
 
-  finish $cmd $chain
+  finish $cmd $table $chain
   
-  echo "[PASS] $cmd add rules"
+  echo "[PASS] $cmd $table add rules"
   return 0
 }
 
 
-main "iptables" $(date +DNSTEST-IPv4-%Y%m%d)
+main "iptables" filter $(date +DNSTEST-IPv4-%Y%m%d)
+main "iptables" mangle $(date +DNSTEST-IPv4-%Y%m%d)
 
-main "ip6tables" $(date +DNSTEST-IPv6-%Y%m%d)
+main "ip6tables" filter $(date +DNSTEST-IPv6-%Y%m%d)
+main "ip6tables" mangle $(date +DNSTEST-IPv6-%Y%m%d)
 
 exit 0

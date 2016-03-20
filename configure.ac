@@ -43,8 +43,7 @@ if test x$enable_debug = xyes; then
 else
    AC_MSG_RESULT(no)
 fi
-AC_CHECK_FILE([/etc/centos-release],[AC_SUBST(libdir,[/lib64])],[])
-AC_CHECK_FILE([/etc/fedora-release],[AC_SUBST(libdir,[/lib64])],[])
+AC_CHECK_FILE([/etc/redhat-release],[AC_SUBST(libdir,[/lib64])],[])
 AC_CHECK_FILE([/etc/debian_version],[AC_SUBST(libdir,[/lib])],[])
 LT_INIT
 AC_OUTPUT
