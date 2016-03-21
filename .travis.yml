@@ -1,5 +1,6 @@
 language: c
 before_install:
+  - ip a
   - sudo apt-get -qq update
   - sudo apt-get install -y bind9 
 install: sudo ./install-dependencies.sh --debug

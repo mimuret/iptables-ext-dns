@@ -88,7 +88,7 @@ function check() {
   val=$(echo $res | awk '{print $(NF-1)}' )
   match_check $val
   if [ "$?" != "0" ] ; then
-      echo "[FAIL] $res <- $domain"
+      echo "[FAIL] $res <- $domain $SERVER"
       error $rule
   fi
   echo "[PASS] $rule"
