@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.63])
 m4_define([VERSION_MAJOR],[1])
-m4_define([VERSION_MINOR],[1])
+m4_define([VERSION_MINOR],[2])
 m4_define([VERSION_MICRO],[0])
 AC_INIT(iptables-ext-dns,m4_defn([VERSION_MAJOR]).m4_defn([VERSION_MINOR]).m4_defn([VERSION_MICRO]), mimuret@gmail.com, iptables-ext-dns)
 AC_SUBST(VERSION_INFO, [VERSION_MAJOR:VERSION_MINOR:VERSION_MICRO])

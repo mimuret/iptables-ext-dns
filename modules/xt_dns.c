@@ -37,14 +37,14 @@ MODULE_ALIAS("ip6t_dns");
 #define XT_PARAM const struct xt_match_param
 #define HOTDROP(par) *par->hotdrop = true
 #endif
-
 static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
     const struct dns_h *dh; // dns header working pointer
     struct dns_h _dnsh;     // dns header buffer
 
     uint16_t qlen; // qname length, MAX 255
-    uint16_t mlen; // match qname length, MAX 255
     uint8_t llen;  // label length, MAX 63
+
+    int q, m; // tmp var
 
     uint8_t *qname;                 // qname working pointer
     uint8_t _qname[XT_DNS_MAXSIZE]; // qname buffer
@@ -106,10 +106,10 @@ static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
         DEBUG_PRINT("not match RCODE");
         return false;
     }
-    DEBUG_PRINT("xt_dns: bit check done");
+    DEBUG_PRINT("xt_dns: done checking bits.");
     if ((dnsinfo->setflags & XT_DNS_FLAG_QNAME) ||
         (dnsinfo->maxsize < XT_DNS_FLAG_QNAME_MAXSIZE)) {
-        DEBUG_PRINT("xt_dns: start parse qname");
+        DEBUG_PRINT("xt_dns: start parse qname.");
         qname = _qname;
         qlen = 0;
         llen = 255;
@@ -117,7 +117,7 @@ static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
             // read label size
             if (skb_copy_bits(skb, offset, &llen, sizeof(uint8_t)) < 0 ||
                 llen > XT_DNS_LABEL_MAXSIZE) {
-                DEBUG_PRINT("xt_dns: invalid label len.");
+                DEBUG_PRINT("xt_dns: invalid label len %u->%x.", offset, llen);
                 HOTDROP(par);
                 return false;
             }
@@ -148,19 +148,17 @@ static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
             return false;
         }
         if (dnsinfo->setflags & XT_DNS_FLAG_QNAME) {
-            qlen = mlen = 0;
-            DEBUG_PRINT("start qname matching.");
-            while (qlen < XT_DNS_MAXSIZE && qname[qlen] != 0 &&
-                   dnsinfo->qname[mlen] != 0) {
-                if (tolower(qname[qlen++]) != dnsinfo->qname[mlen++]) {
-                    if (dnsinfo->rmatch) {
-                        mlen = 0;
-                    } else {
-                        break;
-                    }
+            q = qlen - 1;
+            m = dnsinfo->qname_size - 1;
+            DEBUG_PRINT("start qname matching. q=%d,m=%d", q, m);
+            while (q >= 0 && m >= 0) {
+                DEBUG_PRINT("qm: qname[%d]=%d match[%d] = %d", q, qname[q], m,
+                            dnsinfo->qname[m]);
+                if (tolower(qname[q--]) != dnsinfo->qname[m--]) {
+                    break;
                 }
             }
-            if (!FWINVDNS((qname[qlen] == 0 && dnsinfo->qname[mlen] == 0),
+            if (!FWINVDNS((m < 0 && (q < 0 || dnsinfo->rmatch)),
                           XT_DNS_FLAG_QNAME)) {
                 DEBUG_PRINT("not match qname");
                 return false;

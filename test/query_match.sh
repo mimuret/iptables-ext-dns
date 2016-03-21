@@ -15,10 +15,11 @@ fi
 
 function match_check() {
   val=$1
+  echo $val
   if [ "$val" != "0" ] ; then
-    return 1
+    return 0
   fi
-  return 0
+  return 1
 }
 
 function main() {

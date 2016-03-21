@@ -86,6 +86,7 @@ static void dns_init(struct xt_entry_match *m) {
     data->rcode = 0x00;
 
     data->qname[0] = 0;
+    data->qname_size = 1;
     data->qtype = 0xffff;
 
     data->invflags = 0x0000;
@@ -125,6 +126,15 @@ static void parse_qname(const char *flag, uint8_t *qname) {
     if (ns_name_pton(buffer, qname, XT_DNS_MAXSIZE)) {
         xtables_error(PARAMETER_PROBLEM, "Invalid qname %s '%s'", flag, qname);
     }
+}
+static int qname_size(const uint8_t *qname) {
+    uint8_t len = 0;
+    uint8_t llen = 255;
+    while (llen != 0 && len < XT_DNS_MAXSIZE) {
+        llen = *(qname + len);
+        len += llen + 1;
+    }
+    return len;
 }
 
 static int dns_parse(int c, char **argv, int invert, unsigned int *flags,
@@ -229,6 +239,7 @@ static int dns_parse(int c, char **argv, int invert, unsigned int *flags,
             xtables_error(PARAMETER_PROBLEM, "Only one `--qname' allowed");
         }
         parse_qname(optarg, data->qname);
+        data->qname_size = qname_size(data->qname);
         data->setflags |= XT_DNS_FLAG_QNAME;
         if (invert) {
             data->invflags |= XT_DNS_FLAG_QNAME;

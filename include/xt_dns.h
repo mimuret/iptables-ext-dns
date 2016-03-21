@@ -23,6 +23,8 @@ struct xt_dns {
 
     uint16_t invflags; /* Inverse Flags */
     uint16_t setflags; /* Set Confitional flag */
+
+    uint8_t qname_size;
 };
 
 #define XT_DNS_FLAG_QR 0x0001

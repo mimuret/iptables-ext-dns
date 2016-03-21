@@ -59,16 +59,17 @@ function updateCheck() {
   rule=$1
   $IPT -t $TABLE --zero $DNSTEST
 
-  echo $UPDATE_HEX | xxd -r -p | nc $SERVER 53 $NC_OPT > /dev/null 2>&1
+  echo $UPDATE_HEX | xxd -r -p | nc $SERVER 53 $NSUPDATE_OPT > /dev/null 2>&1
 
   res=$($IPT -t $TABLE --list-rules $DNSTEST -v | grep -- "$rule")
   if [ $? != 0 ] ; then
     echo "[ERR] $res"
     error $rule
   fi
-  val=$(echo $res | awk '{print $NF}' )
-  if [ $(match_check $val) ] ; then
-    echo "[FAIL] $res"
+  val=$(echo $res | awk '{print $(NF-1)}' )
+  match_check $val
+  if [ "$?" != "0" ] ; then
+    echo "[FAIL] $res <- update packet"
     error $rule
   fi
   echo "[PASS] $rule"
@@ -84,9 +85,10 @@ function check() {
     error $rule
   fi
   
-  val=$(echo $res | awk '{print $NF}' )
-  if [ $(match_check $val) ] ; then
-      echo "[FAIL] $res"
+  val=$(echo $res | awk '{print $(NF-1)}' )
+  match_check $val
+  if [ "$?" != "0" ] ; then
+      echo "[FAIL] $res <- $domain"
       error $rule
   fi
   echo "[PASS] $rule"
