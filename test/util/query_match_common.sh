@@ -31,7 +31,7 @@ fi
 DNSTEST=$(date +DNSTEST-%Y%m%d)
 
 function ipt() {
-  ./test-ipt.sh $IPT $TABLE $DNSTEST $1
+  ../util/test-ipt.sh $IPT $TABLE $DNSTEST $1
 }
 function begin() {
   ipt "append"
