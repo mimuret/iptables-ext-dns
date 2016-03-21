@@ -5,7 +5,7 @@ function ipt() {
   table=$2
   chain=$3
   act=$4
-  ./test-ipt.sh $cmd $table $chain $act
+  ../util/test-ipt.sh $cmd $table $chain $act
 }
 function begin() {
   cmd=$1
