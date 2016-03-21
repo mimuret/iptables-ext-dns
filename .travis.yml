@@ -1,6 +1,6 @@
 language: c
+sudo: required
 before_install:
-  - sudo ip -6 addr add dev lo ::1/128
   - sudo apt-get -qq update
   - sudo apt-get install -y bind9 
 install: sudo ./install-dependencies.sh --debug
