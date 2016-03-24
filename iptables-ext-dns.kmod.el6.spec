@@ -1,6 +1,8 @@
 %define _unpackaged_files_terminate_build 0
 %define _mod_dir kernel/net/netfilter
 %define kmod_name iptables-ext-dns
+%define kmod_version ""
+%define kmod_release ""
 
 #el6
 %{!?kversion: %define kversion 2.6.32-573.el6.%{_target_cpu}}
