@@ -13,7 +13,7 @@ License: GPLv3
 Group: System Environment/Base
 Source: https://github.com/mimuret/iptables-ext-dns/iptables-ext-dns-%{version}.zip
 URL: https://github.com/mimuret/iptables-ext-dns
-Requires: iptables iptables-ipv6 nc
+Requires: iptables iptables-ipv6 nc ldns
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX
 BuildRequires: gcc make automake libtool kabi-whitelists iptables-devel kernel-headers kernel-devel
 
