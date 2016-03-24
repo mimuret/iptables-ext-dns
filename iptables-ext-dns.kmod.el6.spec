@@ -7,7 +7,7 @@
 
 Summary: Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
 Name: iptables-ext-dns
-Version: 1.2.0
+Version: @PACKAGE_VERSION@
 Release: 0%{?dist}
 License: GPLv3
 Group: System Environment/Base
