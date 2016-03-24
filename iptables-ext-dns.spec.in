@@ -28,7 +28,18 @@ autoreconf --install --force --verbose
 
 %install
 install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test
+install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/common
+install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv4
+install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv6
+install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/util
 install -m755 test/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test
+install -m755 test/common/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/common
+install -m755 test/ipv4/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv4
+install -m755 test/ipv6/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv6
+install -m755 test/util/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/util
+
+install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/perf
+install -m755 perf/*.* ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/perf
 
 install -m755 -d ${RPM_BUILD_ROOT}/lib/modules/%(uname -r)/%{_mod_dir}
 export INSTALL_MOD_PATH=%{buildroot}
@@ -58,6 +69,9 @@ export INSTALL_MOD_DIR=%{_mod_dir}
 %{_datadir}
 
 %changelog
+* Tue Mar 24 2016 t0r0t0r0
+- 4th
+
 * Fri Mar 18 2016 t0r0t0r0
 - 3rd
 
