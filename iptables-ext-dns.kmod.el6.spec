@@ -57,7 +57,6 @@ install -m755 test/util/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/tes
 
 export INSTALL_MOD_PATH=${RPM_BUILD_ROOT}
 export INSTALL_MOD_DIR=extra/%{kmod_name}
-#export INSTALL_MOD_DIR=%{_mod_dir}
 
 %{__make} DESTDIR=${RPM_BUILD_ROOT} install
 
