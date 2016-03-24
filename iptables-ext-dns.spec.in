@@ -32,7 +32,6 @@ install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/common
 install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv4
 install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv6
 install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/util
-install -m755 test/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test
 install -m755 test/common/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/common
 install -m755 test/ipv4/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv4
 install -m755 test/ipv6/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv6
