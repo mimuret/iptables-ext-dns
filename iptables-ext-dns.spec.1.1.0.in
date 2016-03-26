@@ -3,7 +3,7 @@
 
 Summary: Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
 Name: iptables-ext-dns
-Version: @PACKAGE_VERSION@
+Version: 1.1.0
 Release: 0%{?dist}
 License: GPLv3
 Group: System Environment/Base
@@ -28,17 +28,7 @@ autoreconf --install --force --verbose
 
 %install
 install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test
-install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/common
-install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv4
-install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv6
-install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/util
-install -m755 test/common/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/common
-install -m755 test/ipv4/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv4
-install -m755 test/ipv6/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv6
-install -m755 test/util/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/util
-
-install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/perf
-install -m755 perf/*.* ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/perf
+install -m755 test/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test
 
 install -m755 -d ${RPM_BUILD_ROOT}/lib/modules/%(uname -r)/%{_mod_dir}
 export INSTALL_MOD_PATH=%{buildroot}

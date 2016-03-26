@@ -1,5 +1,11 @@
 %define _unpackaged_files_terminate_build 0
 %define _mod_dir kernel/net/netfilter
+%define kmod_name iptables-ext-dns
+%define kmod_version ""
+%define kmod_release ""
+
+#el6
+%{!?kversion: %define kversion 2.6.32-573.el6.%{_target_cpu}}
 
 Summary: Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
 Name: iptables-ext-dns
@@ -11,7 +17,12 @@ Source: https://github.com/mimuret/iptables-ext-dns/iptables-ext-dns-%{version}.
 URL: https://github.com/mimuret/iptables-ext-dns
 Requires: iptables iptables-ipv6 nc ldns
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX
-BuildRequires: gcc make automake libtool iptables-devel kernel-headers kernel-devel
+BuildRequires: gcc make automake libtool kabi-whitelists iptables-devel kernel-headers kernel-devel
+
+#el6
+Source10: kmodtool-%{kmod_name}-el6.sh
+
+%{expand:%(sh %{SOURCE10} rpmtemplate %{kmod_name} %{kversion} "")}
 
 %description
 Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
@@ -22,11 +33,20 @@ Administration tool for IPv4/IPv6 TCP/UDP packet filtering.
 %setup
 autoreconf --install --force --verbose
 %{configure} --libdir=/%{_lib}
+echo "override %{kmod_name} * weak-updates/%{kmod_name}" > kmod-%{kmod_name}.conf
 
 %build
 %{__make}
 
 %install
+install -m755 -d ${RPM_BUILD_ROOT}/lib/modules/%{kversion}/extra/%{kmod_name}/
+install modules/xt_dns.ko ${RPM_BUILD_ROOT}/lib/modules/%{kversion}/extra/%{kmod_name}/
+
+install -m755 -d ${RPM_BUILD_ROOT}%{_sysconfdir}/depmod.d/
+install kmod-%{kmod_name}.conf ${RPM_BUILD_ROOT}%{_sysconfdir}/depmod.d/
+
+install -m755 -d ${RPM_BUILD_ROOT}%{_defaultdocdir}/kmod-%{kmod_name}-%{version}/
+
 install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test
 install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/common
 install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv4
@@ -37,24 +57,17 @@ install -m755 test/ipv4/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/tes
 install -m755 test/ipv6/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/ipv6
 install -m755 test/util/*.sh ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/test/util
 
-install -m755 -d ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/perf
-install -m755 perf/*.* ${RPM_BUILD_ROOT}%{_datadir}/%{name}-%{version}/perf
+export INSTALL_MOD_PATH=${RPM_BUILD_ROOT}
+export INSTALL_MOD_DIR=extra/%{kmod_name}
 
-install -m755 -d ${RPM_BUILD_ROOT}/lib/modules/%(uname -r)/%{_mod_dir}
-export INSTALL_MOD_PATH=%{buildroot}
-export INSTALL_MOD_DIR=%{_mod_dir}
-%{__make} DESTDIR=%{buildroot} install
+%{__make} DESTDIR=${RPM_BUILD_ROOT} install
 
 %clean
 %{__rm} -rf ${RPM_BUILD_ROOT}
 
 %post
-/sbin/ldconfig
-/sbin/depmod -A
 
 %postun
-/sbin/ldconfig
-/sbin/depmod -A
 
 %files
 %defattr(-,root,root)
@@ -62,20 +75,11 @@ export INSTALL_MOD_DIR=%{_mod_dir}
 %doc LICENSE
 %doc README.md
 
+/etc/depmod.d/kmod-iptables-ext-dns.conf
 /%{_lib}/xtables/libxt_dns.*
-/lib/modules/%(uname -r)/%{_mod_dir}/xt_dns.ko
 
 %{_datadir}
 
 %changelog
-* Tue Mar 24 2016 t0r0t0r0
-- 4th
-
-* Fri Mar 18 2016 t0r0t0r0
-- 3rd
-
-* Mon Feb 29 2016 t0r0t0r0
-- 2nd
-
 * Fri Feb 26 2016 t0r0t0r0
 - 1st
