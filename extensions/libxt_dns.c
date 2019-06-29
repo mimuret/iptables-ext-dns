@@ -1,15 +1,15 @@
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <getopt.h>
-#include <netinet/in.h>
-#include <xtables.h>
-#include <arpa/nameser.h>
 #include "autoconfig.h"
 #include "kernel.h"
 #include "xt_dns.h"
 #include "xt_dns_flags.h"
+#include <arpa/nameser.h>
+#include <ctype.h>
+#include <getopt.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <xtables.h>
 
 #ifndef DEBUG
 #define DEBUG_PRINT(fmt, ...)                                                  \
@@ -37,6 +37,7 @@
 #define O_DNS_FLAG_QTYPE 'b'
 #define O_DNS_FLAG_RMATCH 'c'
 #define O_DNS_FLAG_QNAME_MAXSIZE 'd'
+#define O_DNS_FLAG_QNAME_MAXSIZE 'e'
 
 static const struct option dns_opts[] = {
     {.name = "qr", .has_arg = false, .val = O_DNS_FLAG_QR},
@@ -52,6 +53,7 @@ static const struct option dns_opts[] = {
     {.name = "qtype", .has_arg = true, .val = O_DNS_FLAG_QTYPE},
     {.name = "rmatch", .has_arg = false, .val = O_DNS_FLAG_RMATCH},
     {.name = "maxsize", .has_arg = true, .val = O_DNS_FLAG_QNAME_MAXSIZE},
+    {.name = "qclass", .has_arg = true, .val = O_DNS_FLAG_QCLASS},
     {.name = NULL, .has_arg = false},
 };
 
@@ -70,9 +72,11 @@ static void dns_help(void) {
            "    --rmatch set qname match mode to reverse matching flag\n"
            "[!] --qtype\n"
            "      (Flags ex. A,AAAA,MX,NS,TXT,SOA... )\n"
-           "	see. "
-           "http://www.iana.org/assignments/dns-parameters/"
-           "dns-parameters.xhtml\n"
+           "      see. "
+           "      http://www.iana.org/assignments/dns-parameters/"
+           "      dns-parameters.xhtml\n"
+           "[!] --qclass\n"
+           "      (Flags ex. IN,CH,HS,ANY... )\n"
            "[!] --maxsize qname max size \n");
 }
 
@@ -88,6 +92,7 @@ static void dns_init(struct xt_entry_match *m) {
     data->qname[0] = 0;
     data->qname_size = 1;
     data->qtype = 0xffff;
+    data->qclass = 1;
 
     data->invflags = 0x0000;
     data->setflags = 0x0000;
@@ -113,7 +118,8 @@ static uint16_t parse_code_flag(const char *name, const char *flag,
 #define parse_opcode_flags(flag)                                               \
     parse_code_flag("OPCODE", flag, dns_flag_opcode)
 #define parse_rcode_flags(flag) parse_code_flag("RCODE", flag, dns_flag_rcode)
-#define parse_qtype_flags(flag) parse_code_flag("QTYPE", flag, dns_flag_qtype)
+#define parse_qtype_flags(flag) parse_code_flag("TYPE", flag, dns_flag_qtype)
+#define parse_qclass_flags(flag) parse_code_flag("CLASS", flag, dns_flag_qtype)
 
 static void parse_qname(const char *flag, uint8_t *qname) {
     char buffer[XT_DNS_MAXSIZE];
@@ -257,6 +263,17 @@ static int dns_parse(int c, char **argv, int invert, unsigned int *flags,
         }
         *flags |= XT_DNS_FLAG_QTYPE;
         break;
+    case O_DNS_FLAG_QCLASS:
+        if (*flags & XT_DNS_FLAG_QCLASS) {
+            xtables_error(PARAMETER_PROBLEM, "Only one `--qclass' allowed");
+        }
+        data->qclass = htons(parse_qclass_flags(optarg));
+        data->setflags |= XT_DNS_FLAG_QCLASS;
+        if (invert) {
+            data->invflags |= XT_DNS_FLAG_QCLASS;
+        }
+        *flags |= XT_DNS_FLAG_QCLASS;
+        break;
     case O_DNS_FLAG_RMATCH:
         if (*flags & XT_DNS_FLAG_RMATCH) {
             xtables_error(PARAMETER_PROBLEM, "Only one `--rmatch' allowed");
@@ -321,7 +338,10 @@ static void print_flag_attribute(const char *name, uint16_t value,
     print_flag_attribute("rcode", value, XT_DNS_FLAG_RCODE, setflags,          \
                          invflags, dns_flag_rcode)
 #define print_flag_qtype(value, setflags, invflags)                            \
-    print_flag_attribute("qtype", value, XT_DNS_FLAG_QTYPE, setflags,          \
+    print_flag_attribute("qtype", value, XT_DNS_FLAG_QTYPE, setflag`s,          \
+                         invflags, dns_flag_qtype)
+#define print_flag_qclass(value, setflags, invflags)                           \
+    print_flag_attribute("qclass", value, XT_DNS_FLAG_QCLASS, setflags,        \
                          invflags, dns_flag_qtype)
 
 static void print_flag_qname(const u_char *qname, uint16_t setflags,
@@ -358,6 +378,7 @@ static void dns_dump(const void *ip, const struct xt_entry_match *match) {
     print_flag_rcode(dns->rcode, dns->setflags, dns->invflags);
     print_flag_qname(dns->qname, dns->setflags, dns->invflags);
     print_flag_qtype(ntohs(dns->qtype), dns->setflags, dns->invflags);
+    print_flag_qclass(ntohs(dns->qclass), dns->setflags, dns->invflags);
     print_flag("rmatch", dns->rmatch, XT_DNS_FLAG_RMATCH, dns->invflags);
     print_maxsize(dns->maxsize, dns->invflags);
 }

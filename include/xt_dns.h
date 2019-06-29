@@ -17,6 +17,7 @@ struct xt_dns {
     unsigned rcode : 4;            /* RCODE */
     uint8_t qname[XT_DNS_MAXSIZE]; /* Qname */
     uint16_t qtype;                /* QTYPE */
+    uint16_t qclass;               /* QCLASS */
 
     bool rmatch;     /* reverse match */
     uint8_t maxsize; /* max size */
@@ -40,4 +41,5 @@ struct xt_dns {
 #define XT_DNS_FLAG_QTYPE 0x0400
 #define XT_DNS_FLAG_RMATCH 0x0800
 #define XT_DNS_FLAG_QNAME_MAXSIZE 0x1000
-#define XT_DNS_FLAG_MASK 0x1FFF
+#define XT_DNS_FLAG_QCLASS 0x2000
+#define XT_DNS_FLAG_MASK 0x2FFF

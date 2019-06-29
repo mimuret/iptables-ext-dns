@@ -67,6 +67,8 @@ function main() {
   check "-m dns ! --qtype URI"
   check "-m dns --qtype TA"
   check "-m dns ! --qtype TA"
+  check "-m dns --qclass CH"
+  check "-m dns ! --qclass CH"
   check "-m dns --qname example.jp --rmatch"
   check "-m dns ! --qname example.jp --rmatch"
   check "-m dns --maxsize 128"

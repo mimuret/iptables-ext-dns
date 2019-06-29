@@ -4,6 +4,9 @@ struct dns_flag_names {
     const char *name;
     uint16_t flag;
 };
+const struct dns_flag_names dns_flag_class[] = {
+    {"IN", 1}, {"CH", 3}, {"HS", 4}, {"ANY", 255}, {NULL, 0},
+};
 const struct dns_flag_names dns_flag_opcode[] = {
     {"QUERY", 0},  {"IQUERY", 1}, {"STATUS", 2},
     {"NOTIFY", 4}, {"UPDATE", 5}, {NULL, 0},
@@ -34,5 +37,6 @@ const struct dns_flag_names dns_flag_qtype[] = {
     {"LP", 107},      {"EUI48", 108},  {"EUI64", 109},     {"TKEY", 249},
     {"TSIG", 250},    {"IXFR", 251},   {"AXFR", 252},      {"MAILB", 253},
     {"MAILA", 254},   {"ANY", 255},    {"URI", 256},       {"CAA", 257},
-    {"TA", 32768},    {"DLV", 32769},  {NULL, 0},
+    {"AVC", 258},     {"DOA", 259},    {"TA", 32768},      {"DLV", 32769},
+    {NULL, 0},
 };

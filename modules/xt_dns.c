@@ -49,7 +49,8 @@ static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
     uint8_t *qname;                 // qname working pointer
     uint8_t _qname[XT_DNS_MAXSIZE]; // qname buffer
     uint16_t qtype;                 // qtype buffer
-
+    uint16_t qclass;                 // qtype buffer
+    
     const struct xt_dns *dnsinfo = par->matchinfo;
 
     DEBUG_PRINT("start dns match");
@@ -144,6 +145,17 @@ static bool dns_mt(const struct sk_buff *skb, XT_PARAM *par, int16_t offset) {
         }
         if ((dnsinfo->setflags & XT_DNS_FLAG_QTYPE) &&
             !FWINVDNS((qtype == dnsinfo->qtype), XT_DNS_FLAG_QTYPE)) {
+            DEBUG_PRINT("not match qtype");
+            return false;
+        }
+        offset++;
+        if (skb_copy_bits(skb, offset, &qclass, sizeof(qclass)) < 0) {
+            DEBUG_PRINT("xt_dns: invalid qtype");
+            HOTDROP(par);
+            return false;
+        }
+        if ((dnsinfo->setflags & XT_DNS_FLAG_QCLASS) &&
+            !FWINVDNS((qclass == dnsinfo->qclass), XT_DNS_FLAG_QCLASS)) {
             DEBUG_PRINT("not match qtype");
             return false;
         }
@@ -290,13 +302,13 @@ static struct xt_match dns_mt_reg[] __read_mostly = {
      .match = dns_mt4,
      .matchsize = sizeof(struct xt_dns),
      .me = THIS_MODULE,
-     .hooks = (1 << NF_INET_LOCAL_IN) | (1 << NF_INET_PRE_ROUTING)},
+     .hooks = (1 << NF_INET_LOCAL_IN) | (1 << NF_INET_PRE_ROUTING) | (1 << NF_INET_FORWARD)},
     {.name = "dns",
      .family = NFPROTO_IPV6,
      .match = dns_mt6,
      .matchsize = sizeof(struct xt_dns),
      .me = THIS_MODULE,
-     .hooks = (1 << NF_INET_LOCAL_IN) | (1 << NF_INET_PRE_ROUTING)}};
+     .hooks = (1 << NF_INET_LOCAL_IN) | (1 << NF_INET_PRE_ROUTING) | (1 << NF_INET_FORWARD)}};
 static int __init dns_mt_init(void) {
     return xt_register_matches(dns_mt_reg, ARRAY_SIZE(dns_mt_reg));
 }

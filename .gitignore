@@ -42,3 +42,5 @@ modules/kernel.h
 
 .deps
 .libs
+
+.vscode
